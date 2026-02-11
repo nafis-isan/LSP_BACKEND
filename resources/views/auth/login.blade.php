@@ -5,256 +5,245 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Login - Sistem LSP</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8e6f0 0%, #6ba3d9 100%);
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .login-container {
-            max-width: 450px;
-            width: 100%;
+            align-items: center;
             padding: 20px;
         }
-        
-        .login-card {
-            background: white;
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 50px 40px;
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-        }
-        
-        .login-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 420px;
             text-align: center;
         }
-        
-        .login-header i {
-            font-size: 4rem;
-            margin-bottom: 15px;
+
+        .logo-container {
+            margin-bottom: 30px;
+            text-align: center;
         }
-        
-        .login-header h3 {
-            margin: 0;
+
+        .logo-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            background: transparent;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #1a1a1a;
+            margin-bottom: 35px;
             font-weight: 600;
         }
-        
-        .login-header p {
-            margin: 5px 0 0 0;
-            opacity: 0.9;
-            font-size: 0.95rem;
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
         }
-        
-        .login-body {
-            padding: 40px 30px;
+
+        .input-wrapper {
+            position: relative;
         }
-        
-        .form-floating label {
-            color: #6c757d;
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e0e7ff;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f8faff;
+            color: #333;
         }
-        
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #5d8dd6;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(93, 141, 214, 0.1);
         }
-        
-        .btn-login {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 12px;
-            font-weight: 600;
-            transition: transform 0.3s, box-shadow 0.3s;
+
+        input::placeholder {
+            color: #8b9dc3;
         }
-        
-        .btn-login:hover {
-            background: linear-gradient(135deg, #5568d3 0%, #653b8f 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .password-toggle {
+
+        .toggle-password {
             position: absolute;
-            right: 15px;
+            right: 18px;
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
-            color: #6c757d;
-            z-index: 10;
+            color: #6b7280;
+            font-size: 20px;
+            user-select: none;
+            padding: 5px;
         }
-        
-        .password-toggle:hover {
-            color: #495057;
+
+        .toggle-password:hover {
+            color: #374151;
         }
-        
-        .alert {
-            border-radius: 10px;
+
+        .login-button {
+            width: 100%;
+            padding: 16px;
+            background: #5d8dd6;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
         }
-        
-        .form-check-input:checked {
-            background-color: #667eea;
-            border-color: #667eea;
+
+        .login-button:hover {
+            background: #4a7ec7;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(93, 141, 214, 0.3);
         }
-        
-        .login-footer {
-            text-align: center;
-            padding: 20px;
-            background: #f8f9fa;
-            color: #6c757d;
-            font-size: 0.9rem;
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border-left: 4px solid #c33;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .remember-me label {
+            font-size: 14px;
+            color: #6b7280;
+            cursor: pointer;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+
+            .logo-inner {
+                width: 68px;
+                height: 68px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-card">
-            <!-- Header -->
-            <div class="login-header">
-                <i class="bi bi-shield-check"></i>
-                <h3>Sistem LSP</h3>
-                <p>Lembaga Sertifikasi Profesi</p>
-            </div>
-            
-            <!-- Body -->
-            <div class="login-body">
-                <!-- Alert Messages -->
-                @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill"></i> {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-                @endif
-                
-                @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-                @endif
-                
-                @if($errors->any())
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                    <ul class="mb-0 ps-3">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-                @endif
-                
-                <!-- Login Form -->
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
-                    
-                    <div class="form-floating mb-3">
-                        <input type="email" 
-                               class="form-control @error('email') is-invalid @enderror" 
-                               id="email" 
-                               name="email" 
-                               placeholder="name@example.com"
-                               value="{{ old('email') }}"
-                               required 
-                               autofocus>
-                        <label for="email">
-                            <i class="bi bi-envelope"></i> Email
-                        </label>
-                        @error('email')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <div class="form-floating mb-3 position-relative">
-                        <input type="password" 
-                               class="form-control @error('password') is-invalid @enderror" 
-                               id="password" 
-                               name="password" 
-                               placeholder="Password"
-                               required>
-                        <label for="password">
-                            <i class="bi bi-lock"></i> Password
-                        </label>
-                        <span class="password-toggle" onclick="togglePassword()">
-                            <i class="bi bi-eye" id="toggleIcon"></i>
-                        </span>
-                        @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" 
-                               type="checkbox" 
-                               name="remember" 
-                               id="remember"
-                               {{ old('remember') ? 'checked' : '' }}>
-                        <label class="form-check-label" for="remember">
-                            Ingat Saya
-                        </label>
-                    </div>
-                    
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-login">
-                            <i class="bi bi-box-arrow-in-right"></i> Login
-                        </button>
-                    </div>
-                </form>
-                
-                <!-- Forgot Password Link -->
-                <div class="text-center mt-3">
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}" class="text-decoration-none">
-                            <small>Lupa Password?</small>
-                        </a>
-                    @endif
-                </div>
-            </div>
-            
-            <!-- Footer -->
-            <div class="login-footer">
-                <p class="mb-0">&copy; {{ date('Y') }} Sistem LSP. All rights reserved.</p>
-            </div>
+        <div class="logo-container">
+            <img src="/assets/Logo.png" alt="Logo" class="logo-image">
         </div>
-        
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
+        <h1>Login to Continue</h1>
+
+        @if ($errors->any())
+            <div class="error-message">
+                @foreach ($errors->all() as $error)
+                    {{ $error }}
+                @endforeach
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+
+            <div class="form-group">
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Username"
+                    value="{{ old('email') }}"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Password"
+                        required
+                    >
+                    <span class="toggle-password" onclick="togglePassword()">👁️</span>
+                </div>
+            </div>
+
+            <div class="remember-me">
+                <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                <label for="remember">Remember me</label>
+            </div>
+
+            <button type="submit" class="login-button">LOGIN</button>
+        </form>
+    </div>
+
     <script>
         function togglePassword() {
             const passwordInput = document.getElementById('password');
-            const toggleIcon = document.getElementById('toggleIcon');
-            
+            const toggleIcon = document.querySelector('.toggle-password');
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                toggleIcon.classList.remove('bi-eye');
-                toggleIcon.classList.add('bi-eye-slash');
+                toggleIcon.textContent = '🙈';
             } else {
                 passwordInput.type = 'password';
-                toggleIcon.classList.remove('bi-eye-slash');
-                toggleIcon.classList.add('bi-eye');
+                toggleIcon.textContent = '👁️';
             }
         }
-        
-        // Auto hide alerts after 5 seconds
-        setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(function(alert) {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            });
-        }, 5000);
     </script>
 </body>
 </html>
