@@ -14,7 +14,7 @@ Route::middleware('api')->group(function () {
         Route::delete('{id}', [AsesiController::class, 'destroy']);      // Delete
         Route::get('export', [AsesiController::class, 'exportData']);    // Export
     });
-
+    
     // Asesor Routes
     Route::prefix('asesor')->group(function () {
         Route::get('/', [AsesorController::class, 'index']);              // List all
