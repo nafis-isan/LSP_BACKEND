@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -19,41 +20,38 @@ class UserController extends Controller
 
         $users = $query->latest()->paginate(5);
 
-        return view('users.index', compact('users'));
+        return response()->json([
+            'success' => true,
+            'data' => $users
+        ]);
     }
 
-    public function create()
+    public function store(Request $request)
     {
-        return view('users.create');
-    }
-
-        public function store(Request $request)
-    {
-        $request->validate([
+        $data = $request->validate([
             'nama_lengkap' => 'required',
             'username' => 'required|unique:users',
             'level' => 'required|in:administrator,asesor,asesi,validator',
             'password' => 'required|min:6',
         ]);
 
-        User::create([
-            'nama_lengkap' => $request->nama_lengkap,
-            'username' => $request->username,
-            'level' => $request->level,
-            'password' => bcrypt($request->password),
-        ]);
+        $data['password'] = bcrypt($data['password']);
 
-        return redirect()->route('users.index')
-            ->with('success', 'Data user berhasil ditambahkan');
+        $user = User::create($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User berhasil ditambahkan',
+            'data' => $user
+        ], 201);
     }
+
     public function show(User $user)
     {
-        return view('users.show', compact('user'));
-    }
-
-    public function edit(User $user)
-    {
-        return view('users.edit', compact('user'));
+        return response()->json([
+            'success' => true,
+            'data' => $user
+        ]);
     }
 
     public function update(Request $request, User $user)
@@ -65,25 +63,29 @@ class UserController extends Controller
             'password' => 'nullable|min:6',
         ]);
 
-        // kalau password diisi
-        if ($request->password) {
-            $data['password'] = bcrypt($request->password);
+        if (!empty($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
         } else {
             unset($data['password']);
         }
 
         $user->update($data);
 
-        return redirect()->route('user.index')
-            ->with('success', 'Data user berhasil diupdate');
+        return response()->json([
+            'success' => true,
+            'message' => 'User berhasil diupdate',
+            'data' => $user
+        ]);
     }
 
     public function destroy(User $user)
     {
         $user->delete();
 
-        return redirect()->route('users.index')
-            ->with('success', 'Data user berhasil dihapus');
+        return response()->json([
+            'success' => true,
+            'message' => 'User berhasil dihapus'
+        ]);
     }
 
     public function resetPassword(Request $request, User $user)
@@ -96,7 +98,9 @@ class UserController extends Controller
             'password' => Hash::make($validated['password'])
         ]);
 
-        return redirect()->route('users.index')
-            ->with('success', 'Password berhasil direset.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Password berhasil direset'
+        ]);
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AsesiController;
 use App\Http\Controllers\Api\AsesorController;
+use App\Http\Controllers\Api\TukController;
 use Illuminate\Support\Facades\Route;           
 
 Route::middleware('api')->group(function () {
@@ -24,4 +25,14 @@ Route::middleware('api')->group(function () {
         Route::delete('{id}', [AsesorController::class, 'destroy']);      // Delete
         Route::get('export', [AsesorController::class, 'exportData']);    // Export
     });
+
+Route::prefix('tuks')->group(function () {
+Route::get('/', [TukController::class, 'index']);
+Route::post('/', [TukController::class, 'store']);
+Route::get('{id}', [TukController::class, 'show']);
+Route::put('{id}', [TukController::class, 'update']);
+Route::patch('{id}', [TukController::class, 'update']);
+Route::delete('{id}', [TukController::class, 'destroy']);
+});
+
 });

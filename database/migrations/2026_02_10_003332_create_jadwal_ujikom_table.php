@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('jadwal_ujikom', function (Blueprint $table) {
             $table->id();
             $table->foreignId('skema_id')->constrained('skema')->onDelete('cascade');
-            $table->foreignId('tuk_id')->constrained('tuk')->onDelete('cascade');
+            $table->foreignId('tuk_id')->constrained('tuks')->onDelete('cascade');
             $table->foreignId('tahun_aktif_id')->constrained('tahun_aktif')->onDelete('cascade');
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');

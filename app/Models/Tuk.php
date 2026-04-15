@@ -9,16 +9,14 @@ class Tuk extends Model
 {
     use HasFactory;
 
-    protected $table = 'tuk';
+    protected $table = 'tuks';
 
     protected $fillable = [
-        'kode_tuk',
-        'nama_tuk',
-        'alamat',
-        'no_telepon',
-        'jenis_tuk',
-        'status'
-    ];
+    'foto',
+    'nama_tuk',
+    'jenis_tuk',
+    'deskripsi',
+];
 
     public function jadwalUjikom()
     {
