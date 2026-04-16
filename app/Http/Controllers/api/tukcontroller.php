@@ -1,49 +1,90 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Tuk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
-class tukcontroller extends Controller
+class TukController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $tuks = Tuk::latest()->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $tuks
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'foto' => 'nullable|image',
+            'nama_tuk' => 'required',
+            'jenis_tuk' => 'required|in:sewaktu,mandiri,tempat kerja',
+            'deskripsi' => 'nullable',
+        ]);
+
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('tuk', 'public');
+        }
+
+        $tuk = Tuk::create($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil ditambahkan',
+            'data' => $tuk
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Tuk $tuk)
     {
-        //
+        return response()->json([
+            'success' => true,
+            'data' => $tuk
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Tuk $tuk)
     {
-        //
+        $data = $request->validate([
+            'foto' => 'nullable|image',
+            'nama_tuk' => 'required',
+            'jenis_tuk' => 'required|in:sewaktu,mandiri,tempat kerja',
+            'deskripsi' => 'nullable',
+        ]);
+
+        if ($request->hasFile('foto')) {
+            if ($tuk->foto) {
+                Storage::disk('public')->delete($tuk->foto);
+            }
+            $data['foto'] = $request->file('foto')->store('tuk', 'public');
+        }
+
+        $tuk->update($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil diupdate',
+            'data' => $tuk
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Tuk $tuk)
     {
-        //
+        if ($tuk->foto) {
+            Storage::disk('public')->delete($tuk->foto);
+        }
+
+        $tuk->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil dihapus'
+        ]);
     }
 }
