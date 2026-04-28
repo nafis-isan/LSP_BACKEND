@@ -15,9 +15,17 @@ class Skema extends Model
         'kode_skema',
         'nama_skema',
         'jenjang',
+        'jenis_skema',
+        'file_skema',
+        'jumlah_unit',
         'deskripsi',
         'status'
     ];
+
+    public function units()
+    {
+        return $this->hasMany(Unit::class);
+    }
 
     public function asesors()
     {

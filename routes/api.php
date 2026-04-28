@@ -2,6 +2,10 @@
 
 use App\Http\Controllers\Api\AsesiController;
 use App\Http\Controllers\Api\AsesorController;
+use App\Http\Controllers\Api\SkemaController;
+use App\Http\Controllers\Api\UnitController;
+use App\Http\Controllers\Api\ElementController;
+use App\Http\Controllers\Api\KriteriaKerjaController;
 use App\Http\Controllers\Api\TukController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\MukController;
@@ -29,7 +33,7 @@ Route::middleware('api')->group(function () {
         Route::get('export', [AsesorController::class, 'exportData']);    // Export
     });
 
-   
+
     Route::prefix('tuks')->group(function () {
         Route::get('/', [TukController::class, 'index']);
         Route::post('/', [TukController::class, 'store']);
@@ -37,6 +41,49 @@ Route::middleware('api')->group(function () {
         Route::put('{id}', [TukController::class, 'update']);
         Route::patch('{id}', [TukController::class, 'update']);
         Route::delete('{id}', [TukController::class, 'destroy']);
+    });
+
+    // Skema Routes
+    Route::prefix('skema')->group(function () {
+        Route::get('/', [SkemaController::class, 'index']);              // List all
+        Route::post('/', [SkemaController::class, 'store']);             // Create
+        Route::get('{id}', [SkemaController::class, 'show']);            // Show
+        Route::put('{id}', [SkemaController::class, 'update']);          // Update
+        Route::patch('{id}', [SkemaController::class, 'update']);        // Update
+        Route::delete('{id}', [SkemaController::class, 'destroy']);      // Delete
+    });
+
+    // Unit Routes
+    Route::prefix('unit')->group(function () {
+        Route::get('/', [UnitController::class, 'index']);               // List all
+        Route::post('/', [UnitController::class, 'store']);              // Create
+        Route::get('skema/{skemaId}', [UnitController::class, 'bySkema']); // Get units by skema
+        Route::get('{id}', [UnitController::class, 'show']);             // Show
+        Route::put('{id}', [UnitController::class, 'update']);           // Update
+        Route::patch('{id}', [UnitController::class, 'update']);         // Update
+        Route::delete('{id}', [UnitController::class, 'destroy']);       // Delete
+    });
+
+    // Element Routes
+    Route::prefix('element')->group(function () {
+        Route::get('/', [ElementController::class, 'index']);            // List all
+        Route::post('/', [ElementController::class, 'store']);           // Create
+        Route::get('unit/{unitId}', [ElementController::class, 'byUnit']); // Get elements by unit
+        Route::get('{id}', [ElementController::class, 'show']);          // Show
+        Route::put('{id}', [ElementController::class, 'update']);        // Update
+        Route::patch('{id}', [ElementController::class, 'update']);      // Update
+        Route::delete('{id}', [ElementController::class, 'destroy']);    // Delete
+    });
+
+    // Kriteria Kerja Routes
+    Route::prefix('kriteria-kerja')->group(function () {
+        Route::get('/', [KriteriaKerjaController::class, 'index']);      // List all
+        Route::post('/', [KriteriaKerjaController::class, 'store']);     // Create
+        Route::get('element/{elementId}', [KriteriaKerjaController::class, 'byElement']); // Get by element
+        Route::get('{id}', [KriteriaKerjaController::class, 'show']);    // Show
+        Route::put('{id}', [KriteriaKerjaController::class, 'update']);  // Update
+        Route::patch('{id}', [KriteriaKerjaController::class, 'update']); // Update
+        Route::delete('{id}', [KriteriaKerjaController::class, 'destroy']); // Delete
     });
 
     // Users Routes

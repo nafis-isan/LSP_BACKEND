@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('skema', function (Blueprint $table) {
+        Schema::create('element', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_skema')->unique();
-            $table->string('nama_skema');
-            $table->string('jenjang');
-            $table->enum('jenis_skema', ['KKNI', 'okupasi', 'klaster'])->nullable();
-            $table->string('file_skema')->nullable();
-            $table->integer('jumlah_unit')->nullable();
-            $table->text('deskripsi')->nullable();
+            $table->unsignedBigInteger('unit_id');
+            $table->string('judul_elemen');
+            $table->text('kriteria_unjuk_kerja')->nullable();
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
+
+            $table->foreign('unit_id')
+                ->references('id')
+                ->on('unit')
+                ->onDelete('cascade');
         });
     }
 
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('skema');
+        Schema::dropIfExists('element');
     }
 };
