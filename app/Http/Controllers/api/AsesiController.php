@@ -18,7 +18,7 @@ class AsesiController extends Controller
     public function index()
     {
         try {
-            $asesi = Asesi::paginate(15);
+            $asesi = Asesi::orderBy('id')->paginate(15);
             
             return response()->json([
                 'success' => true,

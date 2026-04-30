@@ -18,7 +18,7 @@ class AsesorController extends Controller
     public function index()
     {
         try {
-            $asesor = Asesor::paginate(15);
+            $asesor = Asesor::orderBy('id')->paginate(15);
             
             return response()->json([
                 'success' => true,
