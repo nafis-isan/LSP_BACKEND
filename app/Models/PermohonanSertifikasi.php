@@ -15,9 +15,11 @@ class PermohonanSertifikasi extends Model
         'no_permohonan',
         'asesi_id',
         'jadwal_ujikom_id',
+        'tipe_apl',
         'tanggal_permohonan',
         'status',
-        'catatan'
+        'catatan',
+        'dokumen_path'
     ];
 
     protected $casts = [

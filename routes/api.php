@@ -10,7 +10,12 @@ use App\Http\Controllers\Api\TukController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\MukController;
 use App\Http\Controllers\Api\DokumenController;
-use Illuminate\Support\Facades\Route;           
+use App\Http\Controllers\Api\JadwalUjikomController;
+use App\Http\Controllers\Api\PermohonanSertifikasiController;
+use App\Http\Controllers\Api\TahunAktifController;
+use App\Http\Controllers\Api\KopSuratController;
+use App\Http\Controllers\Api\AsesorSkemaController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware('api')->group(function () {
     // Asesi Routes
@@ -22,7 +27,7 @@ Route::middleware('api')->group(function () {
         Route::delete('{id}', [AsesiController::class, 'destroy']);      // Delete
         Route::get('export', [AsesiController::class, 'exportData']);    // Export
     });
-    
+
     // Asesor Routes
     Route::prefix('asesor')->group(function () {
         Route::get('/', [AsesorController::class, 'index']);              // List all
@@ -97,6 +102,14 @@ Route::middleware('api')->group(function () {
         Route::post('{id}/reset-password', [UserController::class, 'resetPassword']); // Reset Password
     });
 
+    // Profile Routes (untuk current authenticated user)
+    Route::middleware('auth:sanctum')->prefix('profile')->group(function () {
+        Route::get('/', [UserController::class, 'profile']);                    // Get profile
+        Route::put('/', [UserController::class, 'updateProfile']);              // Update profile
+        Route::put('password', [UserController::class, 'changePassword']);      // Change password
+        Route::get('permissions', [UserController::class, 'getPermissions']);   // Get permissions
+    });
+
     // MUK Routes
     Route::prefix('muks')->group(function () {
         Route::get('/', [MukController::class, 'index']);              // List all with pagination
@@ -122,5 +135,68 @@ Route::middleware('api')->group(function () {
         Route::delete('{id}', [DokumenController::class, 'destroy']);  // Delete
     });
 
+    // Jadwal Ujikom Routes
+    Route::prefix('jadwal-ujikom')->group(function () {
+        Route::get('/', [JadwalUjikomController::class, 'index']);              // List all with pagination & filters
+        Route::post('/', [JadwalUjikomController::class, 'store']);             // Create
+        Route::get('metadata', [JadwalUjikomController::class, 'getMetadata']); // Get metadata for form
+        Route::get('skema/{skemaId}', [JadwalUjikomController::class, 'bySkema']); // Get by Skema
+        Route::get('tuk/{tukId}', [JadwalUjikomController::class, 'byTuk']);    // Get by TUK
+        Route::get('{id}/kuota', [JadwalUjikomController::class, 'getAvailableKuota']); // Get available kuota
+        Route::get('{id}', [JadwalUjikomController::class, 'show']);            // Show detail
+        Route::put('{id}', [JadwalUjikomController::class, 'update']);          // Update
+        Route::patch('{id}', [JadwalUjikomController::class, 'update']);        // Update
+        Route::delete('{id}', [JadwalUjikomController::class, 'destroy']);      // Delete
     });
-    
+
+    // Permohonan Sertifikasi Routes (APL-01, APL-02)
+    Route::prefix('permohonan')->group(function () {
+        Route::get('/', [PermohonanSertifikasiController::class, 'index']);                      // List all with filters
+        Route::post('/', [PermohonanSertifikasiController::class, 'store']);                     // Create
+        Route::get('summary', [PermohonanSertifikasiController::class, 'summary']);              // Get summary/statistics
+        Route::get('tipe/{tipeApl}', [PermohonanSertifikasiController::class, 'byTipeApl']);     // Get by tipe APL (APL-01/APL-02)
+        Route::get('status/{status}', [PermohonanSertifikasiController::class, 'byStatus']);     // Get by status
+        Route::get('asesi/{asesiId}', [PermohonanSertifikasiController::class, 'byAsesi']);      // Get by asesi
+        Route::get('{id}', [PermohonanSertifikasiController::class, 'show']);                    // Show detail
+        Route::put('{id}', [PermohonanSertifikasiController::class, 'update']);                  // Update
+        Route::patch('{id}', [PermohonanSertifikasiController::class, 'update']);                // Update
+        Route::delete('{id}', [PermohonanSertifikasiController::class, 'destroy']);              // Delete
+    });
+
+    // Tahun Aktif Routes (Pengaturan)
+    Route::prefix('tahun-aktif')->group(function () {
+        Route::get('/', [TahunAktifController::class, 'index']);                                 // List all
+        Route::post('/', [TahunAktifController::class, 'store']);                                // Create
+        Route::get('active', [TahunAktifController::class, 'getActive']);                        // Get active tahun aktif
+        Route::get('{id}', [TahunAktifController::class, 'show']);                               // Show detail
+        Route::put('{id}', [TahunAktifController::class, 'update']);                             // Update
+        Route::patch('{id}', [TahunAktifController::class, 'update']);                           // Update
+        Route::put('{id}/set-active', [TahunAktifController::class, 'setActive']);               // Set as active
+        Route::delete('{id}', [TahunAktifController::class, 'destroy']);                         // Delete
+    });
+
+    // Kop Surat Routes (Pengaturan)
+    Route::prefix('kop-surat')->group(function () {
+        Route::get('/', [KopSuratController::class, 'index']);                                   // List all
+        Route::post('/', [KopSuratController::class, 'store']);                                  // Create
+        Route::get('config', [KopSuratController::class, 'getConfig']);                          // Get konfigurasi (first record)
+        Route::get('{id}', [KopSuratController::class, 'show']);                                 // Show detail
+        Route::put('{id}', [KopSuratController::class, 'update']);                               // Update
+        Route::patch('{id}', [KopSuratController::class, 'update']);                             // Update
+        Route::delete('{id}', [KopSuratController::class, 'destroy']);                           // Delete
+    });
+
+    // Asesor Skema Routes (Pengaturan - Penugasan Asesor ke Skema)
+    Route::prefix('asesor-skema')->group(function () {
+        Route::get('skema/{skemaId}/asesor', [AsesorSkemaController::class, 'getAsesorBySkema']);              // Get asesor by skema
+        Route::get('asesor/{asesorId}/skema', [AsesorSkemaController::class, 'getSkemaByAsesor']);            // Get skema by asesor
+        Route::post('assign', [AsesorSkemaController::class, 'assignAsesorToSkema']);                         // Assign single asesor
+        Route::post('assign-multiple', [AsesorSkemaController::class, 'assignMultipleAsesorToSkema']);        // Assign multiple asesor
+        Route::delete('{asesorId}/skema/{skemaId}', [AsesorSkemaController::class, 'removeAsesorFromSkema']); // Remove single asesor
+        Route::post('remove-multiple', [AsesorSkemaController::class, 'removeMultipleAsesorFromSkema']);      // Remove multiple asesor
+        Route::post('sync', [AsesorSkemaController::class, 'syncAsesorToSkema']);                             // Sync (replace all)
+        Route::get('check/{asesorId}/skema/{skemaId}', [AsesorSkemaController::class, 'checkAssignment']);    // Check assignment
+    });
+
+    });
+
