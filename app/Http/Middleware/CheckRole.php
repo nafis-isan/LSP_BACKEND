@@ -10,23 +10,22 @@ class CheckRole
 {
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (!auth()->check()) {
-            return redirect('login');
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Unauthenticated.'], 401);
         }
 
-        $user = auth()->user();
-
         if ($user->status !== 'aktif') {
-            auth()->logout();
-            return redirect('login')->with('error', 'Akun Anda tidak aktif.');
+            return response()->json(['success' => false, 'message' => 'Akun Anda tidak aktif.'], 403);
         }
 
         foreach ($roles as $role) {
-            if ($user->role === $role) {
+            if ($user->level === $role) {
                 return $next($request);
             }
         }
 
-        abort(403, 'Unauthorized action.');
+        return response()->json(['success' => false, 'message' => 'Unauthorized action.'], 403);
     }
 }

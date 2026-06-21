@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamp('tanggal_penilaian')->nullable();
             $table->timestamps();
 
-            $table->unique(['asesor_id', 'asesi_id', 'jadwal_ujikom_id', 'element_id']);
+            $table->unique(['asesor_id', 'asesi_id', 'jadwal_ujikom_id', 'element_id'], 'guru_penilaian_unique');
             $table->index('asesor_id');
             $table->index('asesi_id');
             $table->index('jadwal_ujikom_id');

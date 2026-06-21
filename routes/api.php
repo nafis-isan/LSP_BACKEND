@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AsesiController;
 use App\Http\Controllers\Api\AsesorController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SkemaController;
 use App\Http\Controllers\Api\UnitController;
 use App\Http\Controllers\Api\ElementController;
@@ -23,8 +24,15 @@ use App\Http\Controllers\Api\GuruActivityLogController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('api')->group(function () {
-    // Asesi Routes
-    Route::prefix('asesi')->group(function () {
+    // Auth Routes
+    Route::post('login', [AuthController::class, 'login']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::get('me', [AuthController::class, 'me']);
+    });
+
+    // Asesi Routes (admin only)
+    Route::prefix('asesi')->middleware(['auth:sanctum', 'role:administrator'])->group(function () {
         Route::get('/', [AsesiController::class, 'index']);              // List all
         Route::post('/', [AsesiController::class, 'store']);             // Create
         Route::get('{id}', [AsesiController::class, 'show']);            // Show
@@ -33,8 +41,8 @@ Route::middleware('api')->group(function () {
         Route::get('export', [AsesiController::class, 'exportData']);    // Export
     });
 
-    // Asesor Routes
-    Route::prefix('asesor')->group(function () {
+    // Asesor Routes (admin only)
+    Route::prefix('asesor')->middleware(['auth:sanctum', 'role:administrator'])->group(function () {
         Route::get('/', [AsesorController::class, 'index']);              // List all
         Route::post('/', [AsesorController::class, 'store']);             // Create
         Route::get('{id}', [AsesorController::class, 'show']);            // Show
@@ -44,7 +52,8 @@ Route::middleware('api')->group(function () {
     });
 
 
-    Route::prefix('tuks')->group(function () {
+    // Tuk Routes (admin only)
+    Route::prefix('tuks')->middleware(['auth:sanctum', 'role:administrator'])->group(function () {
         Route::get('/', [TukController::class, 'index']);
         Route::post('/', [TukController::class, 'store']);
         Route::get('{id}', [TukController::class, 'show']);
@@ -53,14 +62,17 @@ Route::middleware('api')->group(function () {
         Route::delete('{id}', [TukController::class, 'destroy']);
     });
 
-    // Skema Routes
-    Route::prefix('skema')->group(function () {
+    // Skema Routes (lihat data: semua role login, ubah data: admin only)
+    Route::prefix('skema')->middleware('auth:sanctum')->group(function () {
         Route::get('/', [SkemaController::class, 'index']);              // List all
-        Route::post('/', [SkemaController::class, 'store']);             // Create
         Route::get('{id}', [SkemaController::class, 'show']);            // Show
-        Route::put('{id}', [SkemaController::class, 'update']);          // Update
-        Route::patch('{id}', [SkemaController::class, 'update']);        // Update
-        Route::delete('{id}', [SkemaController::class, 'destroy']);      // Delete
+
+        Route::middleware('role:administrator')->group(function () {
+            Route::post('/', [SkemaController::class, 'store']);             // Create
+            Route::put('{id}', [SkemaController::class, 'update']);          // Update
+            Route::patch('{id}', [SkemaController::class, 'update']);        // Update
+            Route::delete('{id}', [SkemaController::class, 'destroy']);      // Delete
+        });
     });
 
     // Unit Routes
@@ -97,7 +109,7 @@ Route::middleware('api')->group(function () {
     });
 
     // Users Routes
-    Route::prefix('users')->group(function () {
+    Route::prefix('users')->middleware(['auth:sanctum', 'role:administrator'])->group(function () {
         Route::get('/', [UserController::class, 'index']);              // List all
         Route::post('/', [UserController::class, 'store']);             // Create
         Route::get('{id}', [UserController::class, 'show']);            // Show
