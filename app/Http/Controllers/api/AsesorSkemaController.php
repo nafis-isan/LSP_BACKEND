@@ -7,9 +7,43 @@ use App\Models\Asesor;
 use App\Models\Skema;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class AsesorSkemaController extends Controller
 {
+    /**
+     * Display all asesor-skema assignments in a single query
+     * (lebih cepat daripada memanggil getSkemaByAsesor per asesor satu-satu).
+     */
+    public function index()
+    {
+        try {
+            $data = DB::table('asesor_skema')
+                ->join('asesor', 'asesor.id', '=', 'asesor_skema.asesor_id')
+                ->join('skema', 'skema.id', '=', 'asesor_skema.skema_id')
+                ->select(
+                    'asesor.id as asesor_id',
+                    'asesor.nama_lengkap as asesor_nama',
+                    'skema.id as skema_id',
+                    'skema.nama_skema as skema_nama'
+                )
+                ->orderBy('asesor.nama_lengkap')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data asesor skema berhasil diambil',
+                'data' => $data,
+            ], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data asesor skema',
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     /**
      * Display all asesor for a specific skema
      */

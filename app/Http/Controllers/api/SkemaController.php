@@ -52,13 +52,13 @@ class SkemaController extends Controller
             $validated = $request->validate([
                 'kode_skema' => 'required|string|unique:skema,kode_skema',
                 'nama_skema' => 'required|string|max:255',
-                'jenjang' => 'required|string|max:100',
                 'jenis_skema' => 'required|in:KKNI,okupasi,klaster',
                 'file_skema' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
                 'jumlah_unit' => 'nullable|integer|min:0',
-                'deskripsi' => 'nullable|string',
-                'status' => 'required|in:aktif,nonaktif'
             ]);
+
+            $validated['jenjang'] = '-';
+            $validated['status'] = 'aktif';
 
             // Handle file upload
             if ($request->hasFile('file_skema')) {

@@ -35,6 +35,28 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Kolom 'name'/'email'/'role' (bawaan Laravel) dan 'nama_lengkap'/'username'/'level'
+     * (dipakai UserController) sengaja dibuat redundan. Sinkronisasi di sini supaya
+     * controller mana pun yang dipakai untuk create/update tidak perlu mengisi keduanya.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (User $user) {
+            if ($user->nama_lengkap && !$user->isDirty('name')) {
+                $user->name = $user->nama_lengkap;
+            }
+
+            if ($user->username && !$user->email) {
+                $user->email = $user->username . '@lsp.local';
+            }
+
+            if ($user->level && in_array($user->level, ['administrator', 'asesor', 'asesi']) && !$user->isDirty('role')) {
+                $user->role = $user->level === 'administrator' ? 'admin' : $user->level;
+            }
+        });
+    }
+
     public function isAdmin()
     {
         return $this->level === 'administrator';

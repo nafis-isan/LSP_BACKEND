@@ -107,7 +107,7 @@ class GuruReferensiController
             ]);
 
             $units = Unit::where('skema_id', $skemaId)
-                ->with('element')
+                ->withCount('elements')
                 ->paginate($request->get('per_page', 20));
 
             return response()->json([
@@ -117,7 +117,7 @@ class GuruReferensiController
                         'id' => $u->id,
                         'nama_unit' => $u->nama_unit,
                         'deskripsi' => $u->deskripsi,
-                        'element_count' => $u->element->count(),
+                        'element_count' => $u->elements_count,
                     ];
                 }),
                 'pagination' => [
@@ -148,7 +148,7 @@ class GuruReferensiController
             ]);
 
             $elements = Element::where('unit_id', $unitId)
-                ->with('kriteriaKerja')
+                ->withCount('kriteriaKerjas')
                 ->paginate($request->get('per_page', 20));
 
             return response()->json([
@@ -158,7 +158,7 @@ class GuruReferensiController
                         'id' => $e->id,
                         'nama_element' => $e->nama_element,
                         'deskripsi' => $e->deskripsi,
-                        'kriteria_kerja_count' => $e->kriteriaKerja->count(),
+                        'kriteria_kerja_count' => $e->kriteriaKerjas_count,
                     ];
                 }),
                 'pagination' => [

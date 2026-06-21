@@ -112,11 +112,11 @@ Route::middleware('api')->group(function () {
     Route::prefix('users')->middleware(['auth:sanctum', 'role:administrator'])->group(function () {
         Route::get('/', [UserController::class, 'index']);              // List all
         Route::post('/', [UserController::class, 'store']);             // Create
-        Route::get('{id}', [UserController::class, 'show']);            // Show
-        Route::put('{id}', [UserController::class, 'update']);          // Update
-        Route::patch('{id}', [UserController::class, 'update']);        // Update
-        Route::delete('{id}', [UserController::class, 'destroy']);      // Delete
-        Route::post('{id}/reset-password', [UserController::class, 'resetPassword']); // Reset Password
+        Route::get('{user}', [UserController::class, 'show']);            // Show
+        Route::put('{user}', [UserController::class, 'update']);          // Update
+        Route::patch('{user}', [UserController::class, 'update']);        // Update
+        Route::delete('{user}', [UserController::class, 'destroy']);      // Delete
+        Route::post('{user}/reset-password', [UserController::class, 'resetPassword']); // Reset Password
     });
 
     // Profile Routes (untuk current authenticated user)
@@ -205,6 +205,7 @@ Route::middleware('api')->group(function () {
 
     // Asesor Skema Routes (Pengaturan - Penugasan Asesor ke Skema)
     Route::prefix('asesor-skema')->group(function () {
+        Route::get('/', [AsesorSkemaController::class, 'index']);                                              // List semua penugasan (1 query)
         Route::get('skema/{skemaId}/asesor', [AsesorSkemaController::class, 'getAsesorBySkema']);              // Get asesor by skema
         Route::get('asesor/{asesorId}/skema', [AsesorSkemaController::class, 'getSkemaByAsesor']);            // Get skema by asesor
         Route::post('assign', [AsesorSkemaController::class, 'assignAsesorToSkema']);                         // Assign single asesor
